@@ -6,25 +6,24 @@ on:
 
 jobs:
   build:
-    name: "✏️ Changelog generation"
+    name: '✏️ Changelog generation'
     runs-on: ubuntu-18.04
     steps:
-      - name: "📥 Check-out"
+      - name: '📥 Check-out'
         uses: actions/checkout@v2
-      - name: "✏️ Generate release changelog"
+      - name: '✏️ Generate release changelog'
         uses: heinrichreimer/github-changelog-generator-action@v2.3
         id: generate-release-changelog
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} 
-      - name: "🚀 Create GitHub release"
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: V001
-          release_name: p0SR9
+          tag_name: V002
+          release_name: P0SR9-test
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
-          
 #       - name: "✏️ Generate full changelog"
 #         id: generate-full-changelog
 #         uses: ./
