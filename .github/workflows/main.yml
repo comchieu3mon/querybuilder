@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: '✏️ Changelog generation'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: '📥 Check-out'
         uses: actions/checkout@v2
@@ -17,6 +17,25 @@ jobs:
         id: generate-release-changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          headerLabel: "# 📑 Changelog"
+          breakingLabel: '### 💥 Breaking'
+          enhancementLabel: '### 🚀 Enhancements'
+          bugsLabel: '### 🐛 Bug fixes'
+          deprecatedLabel: '### ⚠️ Deprecations'
+          removedLabel: '### 🔥 Removals'
+          securityLabel: '### 🛡️ Security'
+          issuesLabel: '### 📁 Other issues'
+          prLabel: '### 📁 Other pull requests'
+          addSections: '{"documentation":{"prefix":"### 📖 Documentation","labels":["documentation"]},"tests":{"prefix":"### ✅ Testing","labels":["tests"]}}'
+          issues: true
+          issuesWoLabels: true
+          pullRequests: true
+          prWoLabels: true
+          author: true
+          unreleased: true
+          compareLink: true
+          stripGeneratorNotice: true
+          verbose: true
       - name: 'Extract project version'
         run: |
           MVN_VERSION=$(mvn -q \
@@ -32,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.MVN_VERSION }}
-          release_name: P0SR9-test
+          release_name: P0SR9-${{ github.ref }}
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
 #         id: generate-full-changelog
