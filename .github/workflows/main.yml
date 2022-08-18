@@ -36,7 +36,7 @@ jobs:
             --non-recursive \
             exec:exec)
         with:
-          tag_name: $MVN_VERSION
+          tag_name: ${{ github.ref }}
           release_name: P0SR9-test
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
