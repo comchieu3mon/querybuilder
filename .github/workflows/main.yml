@@ -24,13 +24,14 @@ jobs:
           -Dexec.args='${project.version}' \
           --non-recursive \
           exec:exec)
+          echo $MVN_VERSION
           echo "MVN_VERSION=$MVN_VERSION" >> $GITHUB_ENV
       - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: V${MVN_VERSION}
+          tag_name: ${MVN_VERSION}
           release_name: P0SR9-test
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
