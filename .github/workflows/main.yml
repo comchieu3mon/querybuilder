@@ -30,8 +30,13 @@ jobs:
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MVN_VERSION: $(mvn -q \
+            -Dexec.executable=echo \
+            -Dexec.args='${project.version}' \
+            --non-recursive \
+            exec:exec)
         with:
-          tag_name: ${MVN_VERSION}
+          tag_name: $MVN_VERSION
           release_name: P0SR9-test
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
