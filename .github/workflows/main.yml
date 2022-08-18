@@ -45,13 +45,17 @@ jobs:
           exec:exec)
           echo $MVN_VERSION
           echo "MVN_VERSION=$MVN_VERSION" >> $GITHUB_ENV
+      - name: Get Hash
+        id: hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_HASH
+          
       - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.MVN_VERSION }}
-          release_name: P0SR9-${{ github.ref }}
+          release_name: P0SR9-${{ env.hash }}
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
 #         id: generate-full-changelog
