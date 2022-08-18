@@ -17,12 +17,20 @@ jobs:
         id: generate-release-changelog
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Extract project version'
+        run: |
+          MVN_VERSION=$(mvn -q \
+          -Dexec.executable=echo \
+          -Dexec.args='${project.version}' \
+          --non-recursive \
+          exec:exec)
+          echo "MVN_VERSION=$MVN_VERSION" >> $GITHUB_ENV
       - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: V002
+          tag_name: V${MVN_VERSION}
           release_name: P0SR9-test
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
 #       - name: "✏️ Generate full changelog"
