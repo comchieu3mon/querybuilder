@@ -56,6 +56,16 @@ jobs:
           tag_name: ${{ env.MVN_VERSION }}
           release_name: P0SR9-${{ env.GIT_HASH }}
           body: ${{ steps.generate-release-changelog.outputs.changelog }}
+          
+      - name: Deploy to Github Package Registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings><servers><server><id>gh</id><username>$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $1}')</username><password>\${env.GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+          REPO="gh::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
+          mvn deploy -DaltDeploymentRepository="${REPO}" -DaltSnapshotDeploymentRepository="${REPO}" -DaltSnapshotDeploymentRepository="${REPO}" --file pom.xml
+
 #       - name: "✏️ Generate full changelog"
 #         id: generate-full-changelog
 #         uses: ./
