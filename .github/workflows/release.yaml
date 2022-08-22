@@ -44,7 +44,3 @@ jobs:
           git config user.email "minhduc.itus@gmail.com"
           mvn gitflow:release -B -DversionDigitToIncrement=$RELEASE_DIGIT -DskipTestProject=true
           
-      - name: "✏️ Generate release changelog"
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} 
