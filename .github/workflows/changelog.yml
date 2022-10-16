@@ -17,41 +17,30 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: 'main'
-      - name: '✏️ Generate release changelog'
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
-        id: generate-release-changelog
+          
+      - name: Release Changelog Builder
+        uses: mikepenz/release-changelog-builder-action@v3
+
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          headerLabel: "# 📑 Changelog"
-          breakingLabel: '### 💥 Breaking'
-          enhancementLabel: '### 🚀 Enhancements'
-          bugsLabel: '### 🐛 Bug fixes'
-          deprecatedLabel: '### ⚠️ Deprecations'
-          removedLabel: '### 🔥 Removals'
-          securityLabel: '### 🛡️ Security'
-          issuesLabel: '### 📁 Other issues'
-          prLabel: '### 📁 Other pull requests'
-          addSections: '{"documentation":{"prefix":"### 📖 Documentation","labels":["documentation"]},"tests":{"prefix":"### ✅ Testing","labels":["tests"]}}'
-          issues: true
-          issuesWoLabels: true
-          pullRequests: true
-          prWoLabels: true
-          author: true
-          unreleased: true
-          compareLink: true
-          stripGeneratorNotice: true
-          verbose: true
-      - name: 'Extract project version'
-        run: |
-          MVN_VERSION=$(mvn -q \
-          -Dexec.executable=echo \
-          -Dexec.args='${project.version}' \
-          --non-recursive \
-          exec:exec)
-          echo $MVN_VERSION
-          echo "MVN_VERSION=$MVN_VERSION" >> $GITHUB_ENV
-      - name: Get Hash
-        run: echo "GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          configurationJson: |
+            {
+              "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
+              "categories": [
+                {
+                    "title": "## 💬 Other",
+                    "labels": ["other"]
+                },
+                {
+                    "title": "## 📦 Dependencies",
+                    "labels": ["dependencies"]
+                }
+              ]
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
@@ -60,7 +49,7 @@ jobs:
         with:
           tag_name: ${{ env.MVN_VERSION }}
           release_name: P0SR9-${{ env.GIT_HASH }}
-          body: ${{ steps.generate-release-changelog.outputs.changelog }}
+          body: ${{steps.github_release.outputs.changelog}}
           
       - name: Deploy to Github Package Registry
         env:
