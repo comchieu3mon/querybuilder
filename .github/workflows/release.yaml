@@ -42,5 +42,5 @@ jobs:
           git remote set-url --push origin https://comchieu3mon:$GITHUB_TOKEN@github.com/comchieu3mon/querybuilder
           git config user.name "comchieu3mon"
           git config user.email "minhduc.itus@gmail.com"
-          mvn gitflow:release -B -DversionDigitToIncrement=$RELEASE_DIGIT -DskipTestProject=true
+          mvn gitflow:release -B -DversionDigitToIncrement=$RELEASE_DIGIT -DskipTestProject=true -DskipTag=true
           
