@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.duccao</groupId>
 	<artifactId>querybuilder</artifactId>
-	<version>0.12.0-SNAPSHOT</version>
+	<version>0.12.0</version>
 	<name>querybuilder</name>
 	<description>Demo project for Query Builder</description>
 	<properties>
