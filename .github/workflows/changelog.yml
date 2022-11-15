@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
-          ref: develop
+          ref: master
 
       - name: '✏️ Generate release changelog'
         uses: heinrichreimer/action-github-changelog-generator@v2.3
