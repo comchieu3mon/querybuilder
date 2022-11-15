@@ -113,7 +113,7 @@
 						<releaseBranchPrefix>release/${project.artifactId}-</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix/${project.artifactId}-</hotfixBranchPrefix>
 						<developmentBranch>develop</developmentBranch>
-						<versionTagPrefix>${project.artifactId}-</versionTagPrefix>
+						<versionTagPrefix>v</versionTagPrefix>
 					</gitFlowConfig>
 					<incrementVersionAtFinish>true</incrementVersionAtFinish>
 				</configuration>
