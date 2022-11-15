@@ -1,4 +1,4 @@
-name: CI1
+name: Changelog Workflow
 
 on:
   workflow_run:
@@ -13,63 +13,55 @@ jobs:
       - name: 'Check release success?'
         if: ${{ github.event.workflow_run.conclusion == 'failure' }}
         run: exit 1
+
       - name: '📥 Check-out'
         uses: actions/checkout@v2
         with:
-          ref: 'main'
-          
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+          fetch-depth: 0
+          persist-credentials: true
+          ref: master
+
+      - name: '✏️ Generate release changelog'
+        uses: heinrichreimer/action-github-changelog-generator@v2.3
+        id: generate-release-changelog
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          headerLabel: "# 📑 Changelog"
+          breakingLabel: '### 💥 Breaking'
+          enhancementLabel: '### 🚀 Enhancements'
+          bugsLabel: '### 🐛 Bug fixes'
+          deprecatedLabel: '### ⚠️ Deprecations'
+          removedLabel: '### 🔥 Removals'
+          securityLabel: '### 🛡️ Security'
+          issuesLabel: '### 📁 Other issues'
+          prLabel: '### 📁 Other pull requests'
+          addSections: '{"documentation":{"prefix":"### 📖 Documentation","labels":["documentation"]},"tests":{"prefix":"### ✅ Testing","labels":["tests"]}}'
+          issues: true
+          issuesWoLabels: true
+          pullRequests: true
+          prWoLabels: true
+          author: true
+          unreleased: true
+          compareLink: true
+          stripGeneratorNotice: true
+          verbose: true
+
+      - name: Extract Maven project version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        id: project
+
+      - name: The tag name is Maven project version
+        run: echo "TAG=${{ steps.project.outputs.version }}" >> $GITHUB_ENV
+     
+      - name: Get Hash
+        run: echo "GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+
       - name: '🚀 Create GitHub release'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.MVN_VERSION }}
-          release_name: P0SR9-${{ env.GIT_HASH }}
-          body: ${{steps.github_release.outputs.changelog}}
-          
-      - name: Deploy to Github Package Registry
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p ~/.m2
-          echo "<settings><servers><server><id>gh</id><username>$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $1}')</username><password>\${env.GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
-          REPO="gh::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
-          mvn deploy -DaltDeploymentRepository="${REPO}" -DaltSnapshotDeploymentRepository="${REPO}" -DaltSnapshotDeploymentRepository="${REPO}" --file pom.xml
-
-#       - name: "✏️ Generate full changelog"
-#         id: generate-full-changelog
-#         uses: ./
-#         with:
-#           token: ${{ secrets.GITHUB_TOKEN }}
-#           headerLabel: "# 📑 Changelog"
-#           breakingLabel: '### 💥 Breaking'
-#           enhancementLabel: '### 🚀 Enhancements'
-#           bugsLabel: '### 🐛 Bug fixes'
-#           deprecatedLabel: '### ⚠️ Deprecations'
-#           removedLabel: '### 🔥 Removals'
-#           securityLabel: '### 🛡️ Security'
-#           issuesLabel: '### 📁 Other issues'
-#           prLabel: '### 📁 Other pull requests'
-#           addSections: '{"documentation":{"prefix":"### 📖 Documentation","labels":["documentation"]},"tests":{"prefix":"### ✅ Testing","labels":["tests"]}}'
-#           issues: true
-#           issuesWoLabels: true
-#           pullRequests: true
-#           prWoLabels: true
-#           author: true
-#           unreleased: true
-#           compareLink: true
-#           stripGeneratorNotice: true
-#           verbose: true
-#       - name: "🖨️ Print changelog to console"
-#         run: cat CHANGELOG.md
-#       - name: "📤 Upload changelog"
-#         uses: actions/upload-artifact@v1.0.0
-#         with:
-#           name: "Changelog"
-#           path: CHANGELOG.md
+          tag_name: v${{ env.TAG }}
+          release_name: P1SR13-${{ env.GIT_HASH }}
+          body: ${{ steps.generate-release-changelog.outputs.changelog }}
+  
