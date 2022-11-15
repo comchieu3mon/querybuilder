@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.duccao</groupId>
 	<artifactId>querybuilder</artifactId>
-	<version>0.13.0</version>
+	<version>0.14.0</version>
 	<name>querybuilder</name>
 	<description>Demo project for Query Builder</description>
 	<properties>
@@ -113,7 +113,7 @@
 						<releaseBranchPrefix>release/${project.artifactId}-</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix/${project.artifactId}-</hotfixBranchPrefix>
 						<developmentBranch>develop</developmentBranch>
-						<versionTagPrefix>${project.artifactId}-</versionTagPrefix>
+						<versionTagPrefix>v</versionTagPrefix>
 					</gitFlowConfig>
 					<incrementVersionAtFinish>true</incrementVersionAtFinish>
 				</configuration>
